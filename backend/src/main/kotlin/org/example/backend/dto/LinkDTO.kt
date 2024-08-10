@@ -1,7 +1,13 @@
 package org.example.backend.dto
 
-data class LinkDTO(val url: String) {
-    init {
-        require(url.isNotBlank()) { "URL must not be blank." }
-    }
-}
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Pattern
+
+data class LinkDTO(
+    @field:NotBlank(message = "URL cannot be blank")
+    @field:Pattern(
+        regexp = "^(https?|ftp):\\/\\/[^\\s/\$.?#].[^\\s]*\$\n",
+        message = "Invalid URL"
+    )
+    val url: String
+)

@@ -1,5 +1,6 @@
 package org.example.backend.controller.rest
 
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -19,7 +20,7 @@ class LinkController(private val linkService: LinkService) {
      * Creates a new [Link] based on the provided [LinkDTO].
      */
     @PostMapping
-    fun create(@RequestBody linkDTO: LinkDTO): ResponseEntity<Link> {
+    fun create(@Valid @RequestBody linkDTO: LinkDTO): ResponseEntity<Link> {
         val link = linkService.create(linkDTO)
         return ResponseEntity(link, HttpStatus.CREATED)
     }
