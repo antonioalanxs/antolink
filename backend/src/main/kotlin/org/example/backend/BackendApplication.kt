@@ -10,22 +10,19 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
+
 @SpringBootApplication
 class BackendApplication
 
 @Document
 data class Link(
-    @Id
-    val id: String? = null,
-    val url: String,
-    val shortCode: String
+    @Id val id: String? = null, val url: String, val shortCode: String
 ) {
     /**
      * Constructor for creating a new [Link] with a random short code.
      */
     constructor(url: String) : this(
-        url = url,
-        shortCode = url.hashCode().toString().take(6)
+        url = url, shortCode = url.hashCode().toString().take(6)
     )
 }
 
@@ -46,10 +43,7 @@ class LinkService(private val linkRepository: LinkRepository) {
         return linkRepository.save(link)
     }
 
-    fun read(shortCode: String): Link {
-        return linkRepository.findByShortCode(shortCode)
-            ?: throw IllegalArgumentException("Link not found.")
-    }
+    fun read(shortCode: String): Link? = linkRepository.findByShortCode(shortCode)
 }
 
 @RestController
@@ -68,9 +62,11 @@ class LinkController(private val linkService: LinkService) {
      * Retrieves a [Link] based on the provided short code.
      */
     @GetMapping("/{shortCode}")
-    fun read(@PathVariable shortCode: String): ResponseEntity<Link> {
-        val link = linkService.read(shortCode)
-        return ResponseEntity(link, HttpStatus.OK)
+    fun redirect(@PathVariable shortCode: String): ResponseEntity<Link> {
+        val url = linkService.read(shortCode)?.url
+
+        url?.let { return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).header("Location", it).build() }
+            ?: return ResponseEntity(HttpStatus.NOT_FOUND)
     }
 }
 
