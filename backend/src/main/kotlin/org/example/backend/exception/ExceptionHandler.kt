@@ -2,6 +2,7 @@ package org.example.backend.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -28,9 +29,9 @@ class ExceptionHandler {
         return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
 
-    @ExceptionHandler(IllegalArgumentException::class)
+    @ExceptionHandler(IllegalArgumentException::class, HttpMessageNotReadableException::class)
     fun handleIllegalArgumentException(
-        exception: IllegalArgumentException
+        exception: Exception
     ): ResponseEntity<Response> {
         val body = Response(
             HttpStatus.BAD_REQUEST,
