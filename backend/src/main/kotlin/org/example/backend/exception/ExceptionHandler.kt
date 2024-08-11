@@ -14,6 +14,14 @@ import org.example.backend.response.Response
  */
 @ControllerAdvice
 class ExceptionHandler {
+
+    /**
+     * [MethodArgumentNotValidException] handler.
+     *
+     * @param exception The [MethodArgumentNotValidException] to handle.
+     *
+     * @return A [ResponseEntity] with a [Response] containing the field errors.
+     */
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleMethodArgumentNotValidException(
         exception: MethodArgumentNotValidException
@@ -29,6 +37,13 @@ class ExceptionHandler {
         return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
 
+    /**
+     * [IllegalArgumentException] and [HttpMessageNotReadableException] handler.
+     *
+     * @param exception The [Exception] to handle.
+     *
+     * @return A [ResponseEntity] with a [Response] containing the exception message.
+     */
     @ExceptionHandler(IllegalArgumentException::class, HttpMessageNotReadableException::class)
     fun handleIllegalArgumentException(
         exception: Exception

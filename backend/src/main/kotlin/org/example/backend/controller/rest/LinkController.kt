@@ -14,6 +14,11 @@ import org.example.backend.model.Link
 import org.example.backend.response.Response
 import org.example.backend.service.LinkService
 
+/**
+ * REST controller for handling [Link] entities related requests.
+ *
+ * @property linkService The service for handling [Link] entities.
+ */
 @RestController
 @RequestMapping("/links")
 class LinkController(private val linkService: LinkService) {
@@ -31,18 +36,18 @@ class LinkController(private val linkService: LinkService) {
         return link?.let { ResponseEntity.ok(it) } ?: ResponseEntity(
             Response(
                 HttpStatus.CONFLICT,
-                mapOf("message" to "Link already exists")
+                "Link already exists"
             ),
             HttpStatus.CONFLICT
         )
     }
 
     /**
-     * Retrieves a [Link] based on the provided short code.
+     * Redirects to the URL associated with the provided short code.
      *
-     * @param shortCode The short code to retrieve the [Link].
+     * @param shortCode The short code to redirect to.
      *
-     * @return The [Link] or a not found status if the [Link] does not exist.
+     * @return A [ResponseEntity] with a [Link] if the short code exists, otherwise a 404 status.
      */
     @GetMapping("/{shortCode}")
     fun redirect(@PathVariable shortCode: String): ResponseEntity<Link> {

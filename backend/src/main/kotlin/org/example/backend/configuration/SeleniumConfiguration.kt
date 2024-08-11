@@ -7,10 +7,20 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import jakarta.annotation.PreDestroy
 
+/**
+ * Configuration for Selenium.
+ *
+ * @property driver The [WebDriver] to use for Selenium operations.
+ */
 @Configuration
 class SeleniumConfiguration {
     private lateinit var driver: WebDriver
 
+    /**
+     * Creates and configures a new [WebDriver] instance if it does not already exist.
+     *
+     * @return The [WebDriver] instance.
+     */
     @Bean
     fun webDriver(): WebDriver {
         if (!::driver.isInitialized) {
@@ -26,6 +36,9 @@ class SeleniumConfiguration {
         return driver
     }
 
+    /**
+     * Cleans up the [WebDriver] instance when the application is shut down.
+     */
     @PreDestroy
     fun cleanup() {
         if (::driver.isInitialized) driver.quit()

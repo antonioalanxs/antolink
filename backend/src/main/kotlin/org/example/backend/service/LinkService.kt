@@ -4,8 +4,13 @@ import org.springframework.stereotype.Service
 import org.example.backend.model.Link
 import org.example.backend.dto.LinkDTO
 import org.example.backend.repository.LinkRepository
-import org.openqa.selenium.WebDriver
 
+/**
+ * Service for handling [Link] entities.
+ *
+ * @property linkRepository The repository for [Link] entities.
+ * @property seleniumService The service for handling Selenium WebDriver operations.
+ */
 @Service
 class LinkService(
     private val linkRepository: LinkRepository,
@@ -18,7 +23,7 @@ class LinkService(
      *
      * @param linkDTO The data transfer object containing the URL to be processed.
      *
-     * @return The created `Link` entity if successful, or `null` if a `Link` with the URL already exists.
+     * @return The created [Link] entity if successful, or null if a [Link] with the URL already exists.
      */
     fun create(linkDTO: LinkDTO): Link? {
         var url = linkDTO.url
@@ -33,5 +38,10 @@ class LinkService(
         return this.linkRepository.save(link)
     }
 
+    /**
+     * Find a [Link] entity by its short code.
+     *
+     * @param shortCode The short code to search for.
+     */
     fun read(shortCode: String): Link? = this.linkRepository.findByShortCode(shortCode)
 }
