@@ -27,6 +27,9 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.hibernate.validator:hibernate-validator")
     implementation("org.seleniumhq.selenium:selenium-java:4.10.0")
@@ -34,11 +37,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.aspectj:aspectjweaver:1.9.9")
     implementation("org.aspectj:aspectjrt:1.9.9")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:mongodb")
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
