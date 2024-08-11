@@ -26,16 +26,11 @@ class LinkService(
      * @return The created [Link] entity if successful, or null if a [Link] with the URL already exists.
      */
     fun create(linkDTO: LinkDTO): Link? {
-        var url = linkDTO.url
+        val url = this.seleniumService.getFinalUrl(linkDTO.url)
 
-        url = this.seleniumService.getFinalUrl(url)
+        if (linkAlreadyExists(url)) return null
 
-        val existingLink = this.linkRepository.findByUrl(url)
-
-        if (existingLink != null) return null
-
-        val link = Link(url)
-        return this.linkRepository.save(link)
+        return this.linkRepository.save(Link(url))
     }
 
     /**
@@ -44,4 +39,13 @@ class LinkService(
      * @param shortCode The short code to search for.
      */
     fun read(shortCode: String): Link? = this.linkRepository.findByShortCode(shortCode)
+
+    /**
+     * Checks if a link already exists in the database.
+     *
+     * @param url The URL to check.
+     *
+     * @return True if the link already exists, false otherwise.
+     */
+    private fun linkAlreadyExists(url: String): Boolean = this.linkRepository.findByUrl(url) != null
 }

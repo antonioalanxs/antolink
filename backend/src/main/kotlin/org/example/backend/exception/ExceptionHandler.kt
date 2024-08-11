@@ -55,4 +55,23 @@ class ExceptionHandler {
 
         return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
+
+    /**
+     * [AuthorizationCodeException] handler.
+     *
+     * @param exception The [AuthorizationCodeException] to handle.
+     *
+     * @return A [ResponseEntity] with a [Response] containing the exception message.
+     */
+    @ExceptionHandler(AuthorizationCodeException::class)
+    fun handleAuthorizationCodeException(
+        exception: AuthorizationCodeException
+    ): ResponseEntity<Response> {
+        val body = Response(
+            HttpStatus.UNAUTHORIZED,
+            exception.message
+        )
+
+        return ResponseEntity(body, HttpStatus.UNAUTHORIZED)
+    }
 }

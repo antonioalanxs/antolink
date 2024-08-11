@@ -13,6 +13,8 @@ import org.example.backend.dto.LinkDTO
 import org.example.backend.model.Link
 import org.example.backend.response.Response
 import org.example.backend.service.LinkService
+import org.example.backend.annotation.RequireAuthorizationCode
+
 
 /**
  * REST controller for handling [Link] entities related requests.
@@ -27,9 +29,10 @@ class LinkController(private val linkService: LinkService) {
      *
      * @param linkDTO The [LinkDTO] to create a new [Link].
      *
-     * @return The created [Link] or a conflict status if the [Link] already exists.
+     * @return The created [Link], a conflict status if the [Link] already exists or a 401 status if the Authorization code provided in header is not correct.
      */
     @PostMapping
+    @RequireAuthorizationCode
     fun create(@Valid @RequestBody linkDTO: LinkDTO): ResponseEntity<Any> {
         val link = this.linkService.create(linkDTO)
 
