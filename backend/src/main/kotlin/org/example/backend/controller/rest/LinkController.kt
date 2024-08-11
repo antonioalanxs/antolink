@@ -35,14 +35,7 @@ class LinkController(private val linkService: LinkService) {
     @RequireAuthorizationCode
     fun create(@Valid @RequestBody linkDTO: LinkDTO): ResponseEntity<Any> {
         val link = this.linkService.create(linkDTO)
-
-        return link?.let { ResponseEntity.ok(it) } ?: ResponseEntity(
-            Response(
-                HttpStatus.CONFLICT,
-                "Link already exists"
-            ),
-            HttpStatus.CONFLICT
-        )
+        return ResponseEntity(link, HttpStatus.CREATED)
     }
 
     /**

@@ -36,9 +36,9 @@ class Seeder(
 
         return this.linkRepository.saveAll(
             listOf(
-                Link("https://nova.elportaldelalumno.com/"),
-                Link("https://x.com/"),
-                Link("https://www.stremio.com/"),
+                Link("https://nova.elportaldelalumno.com/", "nova"),
+                Link("https://x.com/", "x"),
+                Link("https://www.stremio.com/", "stremio"),
             )
         )
     }

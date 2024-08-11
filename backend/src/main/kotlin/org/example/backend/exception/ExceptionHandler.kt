@@ -45,7 +45,7 @@ class ExceptionHandler {
      * @return A [ResponseEntity] with a [Response] containing the exception message.
      */
     @ExceptionHandler(IllegalArgumentException::class, HttpMessageNotReadableException::class)
-    fun handleIllegalArgumentException(
+    fun handleException(
         exception: Exception
     ): ResponseEntity<Response> {
         val body = Response(
@@ -73,5 +73,24 @@ class ExceptionHandler {
         )
 
         return ResponseEntity(body, HttpStatus.UNAUTHORIZED)
+    }
+
+    /**
+     * [CustomDuplicateKeyException] handler.
+     *
+     * @param exception The [CustomDuplicateKeyException] to handle.
+     *
+     * @return A [ResponseEntity] with a [Response] containing the exception message.
+     */
+    @ExceptionHandler(CustomDuplicateKeyException::class)
+    fun handleCustomDuplicateKeyException(
+        exception: CustomDuplicateKeyException
+    ): ResponseEntity<Response> {
+        val body = Response(
+            HttpStatus.CONFLICT,
+            exception.message()
+        )
+
+        return ResponseEntity(body, HttpStatus.CONFLICT)
     }
 }
