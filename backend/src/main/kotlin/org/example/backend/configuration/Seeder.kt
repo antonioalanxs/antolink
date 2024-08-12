@@ -18,14 +18,18 @@ import org.example.backend.model.Link
 class Seeder(
     private val linkRepository: LinkRepository
 ) {
-    @Value("\${custom.destroy-database-on-exit}")
-    private var destroyDatabaseOnExit: Boolean = false
+    @Value("\${custom.initialize-database}")
+    private var initialize: Boolean = false
+    @Value("\${custom.destroy-database}")
+    private var destroy: Boolean = false
 
     /**
      * Runs the seeder.
      */
     @PostConstruct
     fun run() {
+        if (!this.initialize) return
+
         link()
     }
 
@@ -52,9 +56,12 @@ class Seeder(
     private fun isRepositoryEmpty(repository: MongoRepository<*, *>): Boolean =
         repository.count() == 0L
 
+    /**
+     * Destroys the database on exit.
+     */
     @PreDestroy
     fun destroy() {
-        if (!destroyDatabaseOnExit) return
+        if (!this.destroy) return
 
         this.linkRepository.deleteAll()
     }

@@ -31,12 +31,6 @@ jobs:
       run: chmod +x ./gradlew
       working-directory: backend
 
-    - name: Set up environment variables
-      run: | 
-        echo "AUTHORIZATION_CODE=${{ secrets.AUTHORIZATION_CODE }}" >> $GITHUB_ENV
-        echo "MONGODB_ROOT_USERNAME=${{ secrets.MONGODB_ROOT_USERNAME }}" >> $GITHUB_ENV
-        echo "MONGODB_ROOT_PASSWORD=${{ secrets.MONGODB_ROOT_PASSWORD }}" >> $GITHUB_ENV
-
     - name: Build and test
       run: ./gradlew test
       working-directory: backend
