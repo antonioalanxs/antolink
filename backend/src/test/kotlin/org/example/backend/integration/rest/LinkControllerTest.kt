@@ -1,12 +1,12 @@
 package org.example.backend.integration.rest
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.http.MediaType
 import org.junit.jupiter.api.Test
 import org.example.backend.dto.LinkDTO
 import org.example.backend.repository.LinkRepository
-import org.springframework.beans.factory.annotation.Autowired
 
 
 /**
@@ -23,8 +23,8 @@ class LinkControllerTest : BaseIntegrationTest() {
     private val endpoint = "/links"
 
     private val linkDTO = LinkDTO(
-        url = "https://www.x.com/",
-        shortCode = "x"
+        url = "https://spring.io/guides/gs/testing-web",
+        shortCode = "test"
     )
 
     @Test
@@ -55,5 +55,49 @@ class LinkControllerTest : BaseIntegrationTest() {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(this.authorizationCodeHeader, "")
         ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
+    }
+
+    @Test
+    fun `create link using invalid URL should return 400`() {
+        this.mockMvc.perform(
+            MockMvcRequestBuilders.post(this.endpoint)
+                .content(
+                    this.objectMapper.writeValueAsString(
+                        LinkDTO(
+                            url = "test",
+                            shortCode = "test"
+                        )
+                    )
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(this.authorizationCodeHeader, this.authorizationCode)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    fun `create link whose final URL is the same as another link has should return 409`() {
+        var linkDTO = LinkDTO(
+            url = "https://nova.elportaldelalumno.com/",
+            shortCode = "another"
+        )
+
+        this.mockMvc.perform(
+            MockMvcRequestBuilders.post(this.endpoint)
+                .content(this.objectMapper.writeValueAsString(linkDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(this.authorizationCodeHeader, this.authorizationCode)
+        ).andExpect(MockMvcResultMatchers.status().isCreated)
+
+        linkDTO = LinkDTO(
+            url = "https://nova.elportaldelalumno.com/Login",
+            shortCode = "additional"
+        )
+
+        this.mockMvc.perform(
+            MockMvcRequestBuilders.post(this.endpoint)
+                .content(this.objectMapper.writeValueAsString(linkDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(this.authorizationCodeHeader, this.authorizationCode)
+        ).andExpect(MockMvcResultMatchers.status().isConflict)
     }
 }
