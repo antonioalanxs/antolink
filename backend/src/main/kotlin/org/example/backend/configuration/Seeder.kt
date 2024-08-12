@@ -2,7 +2,7 @@ package org.example.backend.configuration
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.repository.MongoRepository
-import io.github.cdimascio.dotenv.dotenv
+import org.springframework.beans.factory.annotation.Value
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import org.example.backend.repository.LinkRepository
@@ -18,7 +18,8 @@ import org.example.backend.model.Link
 class Seeder(
     private val linkRepository: LinkRepository
 ) {
-    private val environment = dotenv()
+    @Value("\${custom.destroy-database-on-exit}")
+    private var destroyDatabaseOnExit: Boolean = false
 
     /**
      * Runs the seeder.
@@ -53,9 +54,7 @@ class Seeder(
 
     @PreDestroy
     fun destroy() {
-        if (
-            !this.environment["DESTROY_DATABASE_ON_EXIT"].toBoolean()
-        ) return
+        if (!destroyDatabaseOnExit) return
 
         this.linkRepository.deleteAll()
     }

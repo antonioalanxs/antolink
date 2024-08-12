@@ -5,9 +5,9 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.stereotype.Component
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Pointcut
-import io.github.cdimascio.dotenv.dotenv
 import org.aspectj.lang.annotation.Before
 import org.example.backend.exception.AuthorizationCodeException
+import org.springframework.beans.factory.annotation.Value
 
 
 /**
@@ -16,10 +16,12 @@ import org.example.backend.exception.AuthorizationCodeException
 @Aspect
 @Component
 class AuthorizationCodeAspect {
-    private val environment = dotenv()
+    @Value("\${custom.authorization-code-header}")
+    private lateinit var authorizationCodeHeader: String
+    @Value("\${custom.authorization-code}")
+    private lateinit var authorizationCode: String
 
     @Pointcut("@annotation(org.example.backend.annotation.RequireAuthorizationCode)")
-
     fun requireAuthorizationCode() {}
 
     /**
@@ -31,19 +33,9 @@ class AuthorizationCodeAspect {
     fun checkAuthorizationCode() {
         val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
 
-        val authorizationCode = request.getHeader("Authorization-Code")
+        val authorizationCode = request.getHeader(this.authorizationCodeHeader)
 
-        if (!isCorrectAuthorizationCode(authorizationCode))
+        if (authorizationCode != this.authorizationCode)
             throw AuthorizationCodeException("Invalid Authorization code")
     }
-
-    /**
-     * Checks if the provided authorization code is correct.
-     *
-     * @param authorizationCode The authorization code to check.
-     *
-     * @return True if the authorization code is correct, false otherwise.
-     */
-    private fun isCorrectAuthorizationCode(authorizationCode: String): Boolean =
-        authorizationCode == this.environment["AUTHORIZATION_CODE"]
 }

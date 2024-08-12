@@ -3,6 +3,7 @@ package org.example.backend.integration.rest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -13,18 +14,16 @@ import org.junit.jupiter.api.BeforeAll
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.cdimascio.dotenv.dotenv
 import org.example.backend.dto.LinkDTO
-import org.example.backend.repository.LinkRepository
 
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-class LinkControllerTest(
-    @Autowired private val mockMvc: MockMvc,
-    @Autowired private val linkRepository: LinkRepository
-) {
+class LinkControllerTest {
+    @Autowired
+    private lateinit var mockMvc: MockMvc
+
     private val objectMapper = ObjectMapper()
 
     private val endpoint = "/links"
@@ -34,8 +33,10 @@ class LinkControllerTest(
         shortCode = "YouTube"
     )
 
-    private val authorizationCodeHeader = "Authorization-Code"
-    private val authorizationCode = dotenv()["AUTHORIZATION_CODE"]
+    @Value("\${custom.authorization-code-header}")
+    private lateinit var authorizationCodeHeader: String
+    @Value("\${custom.authorization-code}")
+    private lateinit var authorizationCode: String
 
     companion object {
         private val mongoDBContainer = MongoDBContainer("mongo:5.0")
