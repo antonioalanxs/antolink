@@ -1,10 +1,13 @@
 package org.example.backend.configuration
 
+import org.springframework.core.io.ClassPathResource
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.beans.factory.annotation.Value
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.example.backend.repository.LinkRepository
 import org.example.backend.model.Link
 
@@ -20,6 +23,7 @@ class Seeder(
 ) {
     @Value("\${custom.initialize-database}")
     private var initialize: Boolean = false
+
     @Value("\${custom.destroy-database}")
     private var destroy: Boolean = false
 
@@ -35,16 +39,14 @@ class Seeder(
 
     /**
      * Creates [Link] entities.
+     *
+     * @return A list of created [Link] entities.
      */
     private fun link(): List<Link>? {
         if (!isRepositoryEmpty(this.linkRepository)) return null
 
         return this.linkRepository.saveAll(
-            listOf(
-                Link("https://nova.elportaldelalumno.com/", "nova"),
-                Link("https://x.com/", "x"),
-                Link("https://www.stremio.com/", "stremio"),
-            )
+            loadFromJSON("data/links.json")
         )
     }
 
@@ -64,5 +66,17 @@ class Seeder(
         if (!this.destroy) return
 
         this.linkRepository.deleteAll()
+    }
+
+    /**
+     * Loads entities from a JSON file.
+     *
+     * @param path The path to the JSON file.
+     */
+    private inline fun <reified T> loadFromJSON(path: String): List<T> {
+        val resource = ClassPathResource(path)
+        val file = resource.file
+        val mapper = jacksonObjectMapper()
+        return mapper.readValue(file)
     }
 }
