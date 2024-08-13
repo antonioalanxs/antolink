@@ -100,4 +100,40 @@ class LinkControllerTest : BaseIntegrationTest() {
                 .header(this.authorizationCodeHeader, this.authorizationCode)
         ).andExpect(MockMvcResultMatchers.status().isConflict)
     }
+
+    @Test
+    fun `redirect to existing link should return 301`() {
+        this.mockMvc.perform(
+            MockMvcRequestBuilders.get("${this.endpoint}/${this.linkDTO.shortCode}")
+        ).andExpect(MockMvcResultMatchers.status().isMovedPermanently)
+    }
+
+    @Test
+    fun `redirect to non-existing link should return 404`() {
+        this.mockMvc.perform(
+            MockMvcRequestBuilders.get("${this.endpoint}/unknown")
+        ).andExpect(MockMvcResultMatchers.status().isNotFound)
+    }
+
+    @Test
+    fun `redirect to existing link should increment its usage count`() {
+        val shortCode = this.linkDTO.shortCode
+
+        val usageCount = this.linkRepository.findByShortCode(shortCode)!!.usageCount
+
+        this.mockMvc.perform(
+            MockMvcRequestBuilders.get("${this.endpoint}/${shortCode}")
+        ).andExpect(MockMvcResultMatchers.status().isMovedPermanently)
+
+        val updatedUsageCount = this.linkRepository.findByShortCode(shortCode)!!.usageCount
+
+        assert(updatedUsageCount == usageCount + 1)
+    }
+
+    @Test
+    fun `retrieve all links should return 200`() {
+        this.mockMvc.perform(
+            MockMvcRequestBuilders.get(this.endpoint)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
+    }
 }
