@@ -47,9 +47,20 @@ class LinkController(private val linkService: LinkService) {
      */
     @GetMapping("/{shortCode}")
     fun redirect(@PathVariable shortCode: String): ResponseEntity<Link> {
-        val url = this.linkService.read(shortCode)?.url
+        val url = this.linkService.redirect(shortCode)
 
         url?.let { return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).header("Location", it).build() }
             ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+    }
+
+    /**
+     * Retrieves all [Link] entities in [LinkDTO]s.
+     *
+     * @return A list of all [Link] entities in [LinkDTO]s.
+     */
+    @GetMapping
+    fun findAll(): ResponseEntity<List<LinkDTO>> {
+        val links = this.linkService.findAll()
+        return ResponseEntity(links, HttpStatus.OK)
     }
 }

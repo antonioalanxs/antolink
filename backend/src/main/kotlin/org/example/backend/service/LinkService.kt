@@ -37,9 +37,27 @@ class LinkService(
     }
 
     /**
-     * Find a [Link] entity by its short code.
+     * Retrieves the URL associated with the provided short code and increments the usage count.
      *
-     * @param shortCode The short code to search for.
+     * @param shortCode The short code to retrieve the URL for.
+     *
+     * @return The URL associated with the short code if it exists, otherwise `null`.
      */
-    fun read(shortCode: String): Link? = this.linkRepository.findByShortCode(shortCode)
+    fun redirect(shortCode: String): String? {
+        var Link = this.linkRepository.findByShortCode(shortCode)
+
+        if (Link == null) return null
+
+        Link.usageCount++
+        Link = this.linkRepository.save(Link)
+
+        return Link.url
+    }
+
+    /**
+     * Retrieves all [Link] entities in [LinkDTO]s.
+     *
+     * @return A list of all [Link] entities in [LinkDTO]s.
+     */
+    fun findAll(): List<LinkDTO> = this.linkRepository.findAll().map { it.toLinkDTO() }
 }
