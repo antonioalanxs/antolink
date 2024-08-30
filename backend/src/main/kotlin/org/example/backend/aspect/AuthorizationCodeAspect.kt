@@ -36,6 +36,6 @@ class AuthorizationCodeAspect {
         val authorizationCode = request.getHeader(this.authorizationCodeHeader)
 
         if (authorizationCode != this.authorizationCode)
-            throw AuthorizationCodeException("Invalid Authorization code")
+            throw AuthorizationCodeException("Invalid Authorization code header")
     }
 }

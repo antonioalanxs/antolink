@@ -37,6 +37,7 @@ dependencies {
     implementation("org.aspectj:aspectjweaver:1.9.9")
     implementation("org.aspectj:aspectjrt:1.9.9")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
